@@ -1,5 +1,7 @@
 //Created by Melody Ruth. Licensed under Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0)
 
+//Image split into r*c movable pieces that "click" together. When you have finished the puzzle, celebratory text displays on the screen.
+
 function startSketch(){
 	var sketch = function(p) {
 		var counter = 0;

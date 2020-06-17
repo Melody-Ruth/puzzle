@@ -9,8 +9,6 @@ function setUp() {
 	}
 };
 
-//var imageW, imageH;
-
 function handleImageUpload() {
 	var readImage = document.getElementById("toPuzzle").files[0];
 	
@@ -20,14 +18,9 @@ function handleImageUpload() {
       //document.getElementById("display-image").src = e.target.result;
 		//testImage = new Image();
 		//testImage.src = e.target.result;
-		//forSize = document.getElementById("display-image");
 		document.getElementById("display-image").src = e.target.result;
 		testingSource = document.getElementById("display-image").src;
 		document.getElementById("display-image").style.display = 'none';
-		
-		//imageW = forSize.width;
-		//imageH = forSize.height;
-		//console.log(readImage.width);
     }
 
 	

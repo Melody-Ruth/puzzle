@@ -1,5 +1,7 @@
 //Created by Melody Ruth. Licensed under Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0)
 
+//Image automaticly resized to keep proportions, but not have height greater than 80% of canvas height or width greater than 80% of canvas width.
+
 function startSketch(){
 	var sketch = function(p) {
 		var counter = 0;
