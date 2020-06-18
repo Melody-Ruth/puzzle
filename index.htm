@@ -7,10 +7,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ascii" />
 <title>Puzzle</title>
 <script type="text/javascript" src="resources/p5.js"></script>
+<script type="text/javascript" src="resources/p5.sound.js"></script>
 <script type="text/javascript" src="puzzle.js"></script>
 <script type="text/javascript" src="puzzleWeb.js"></script>
 </head>
-<body onload="setUp()">
+<body onload="setUp()" onresize="handleResize()">
 <input type="file" id="toPuzzle" onChange="handleImageUpload()"/>
 <input type="button" value="Make Puzzle!" onClick="setUpPuzzle()"/>
 <img id="display-image" src="" />

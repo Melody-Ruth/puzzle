@@ -2,11 +2,20 @@ var testingSource;
 
 var testNumber = 5;
 
+var windowWidth, windowHeight;
+
 function setUp() {
 	var imageInput = document.getElementById("toPuzzle");
 	if (imageInput && imageInput.value) {
 		handleImageUpload();
 	}
+	windowWidth = window.innerWidth;
+	windowHeight = window.innerHeight;
+};
+
+function handleResize() {
+	windowWidth = window.innerWidth;
+	windowHeight = window.innerHeight;
 };
 
 function handleImageUpload() {

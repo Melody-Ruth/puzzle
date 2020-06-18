@@ -1,5 +1,8 @@
 //Created by Melody Ruth. Licensed under Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0)
 
+//Got rid of white band on the bottom of the puzzle (now crop image to be divisible by r and c)
+//Now click on pieces by knobs and not by holes
+
 function startSketch(){
 	var sketch = function(p) {
 		var counter = 0;
@@ -41,8 +44,6 @@ function startSketch(){
 		
 		var testing3;
 		
-		var testSound;
-		
 		p.preload = function() {
 			notCropped = p.loadImage(testingSource);
 			
@@ -60,8 +61,6 @@ function startSketch(){
 			topFlat = p.loadImage("graphics/piece_top_flat.png");
 			
 			testing3 = p.loadImage("graphics/testing3.png");
-			
-			testSound = p.loadSound("graphics/testing.m4a");
 		}
 		
 		var newPiece = function(x,y,index) {
@@ -160,7 +159,6 @@ function startSketch(){
 							this.y = pieces[this.leftIndex].y;
 						}
 						this.leftDone = true;
-						testSound.play();
 					}
 					
 					if (!this.topDone && this.topIndex != -1 && !pieces[this.topIndex].moving && pieces[this.topIndex].x < this.x+margin && pieces[this.topIndex].x > this.x-margin && pieces[this.topIndex].y+pieceH < this.y+margin && pieces[this.topIndex].y+pieceH > this.y-margin) {
@@ -196,7 +194,6 @@ function startSketch(){
 							this.y = pieces[this.topIndex].y+pieceH;
 						}
 						this.topDone = true;
-						testSound.play();
 					}
 					
 					if (this.leftIndex > -1 && this.groupIndex != -1 && pieces[this.leftIndex].groupIndex == this.groupIndex) {

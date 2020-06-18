@@ -4,13 +4,12 @@ function startSketch(){
 	var sketch = function(p) {
 		var counter = 0;
 		var mouseIsReleased = false;
-		var notCropped;
 		var puzzleImage;
 		var puzzleImage2;
 		var newOne = false;
 		var numPieces = 6;//3x2
 		var r = 3;
-		var c = 4;
+		var c = 3;
 		var imageW;
 		var imageH;
 		var pieceW;
@@ -41,10 +40,8 @@ function startSketch(){
 		
 		var testing3;
 		
-		var testSound;
-		
 		p.preload = function() {
-			notCropped = p.loadImage(testingSource);
+			puzzleImage = p.loadImage(testingSource);
 			
 			bottomIn = p.loadImage("graphics/piece_bottom_in.png");
 			bottomOut = p.loadImage("graphics/piece_bottom_out.png");
@@ -60,8 +57,6 @@ function startSketch(){
 			topFlat = p.loadImage("graphics/piece_top_flat.png");
 			
 			testing3 = p.loadImage("graphics/testing3.png");
-			
-			testSound = p.loadSound("graphics/testing.m4a");
 		}
 		
 		var newPiece = function(x,y,index) {
@@ -91,7 +86,7 @@ function startSketch(){
 			piece.topDone = false;
 			//piece.bottomDone = false;
 			piece.drawIt = function() {
-				p.image(pieceImages[this.index],this.x-pieceImageTallW/2,this.y-pieceImageWideH/2);
+				p.image(pieceImages[this.index],this.x,this.y);
 				//console.log(this.x,this.y);
 			};
 			piece.beginningMoveIt = function() {
@@ -99,7 +94,7 @@ function startSketch(){
 				this.y += this.ySpeed;
 			};
 			piece.checkMoving = function() {
-				/*if ((currentlyMoving == -1 || currentlyMoving == this.index || currentlyMovingGroup == this.groupIndex) && p.mouseIsPressed && p.pmouseX > this.x && p.pmouseX < this.x+pieceW && p.pmouseY > this.y && p.pmouseY < this.y+pieceH) {
+				if ((currentlyMoving == -1 || currentlyMoving == this.index || currentlyMovingGroup == this.groupIndex) && p.mouseIsPressed && p.pmouseX > this.x && p.pmouseX < this.x+pieceW && p.pmouseY > this.y && p.pmouseY < this.y+pieceH) {
 					this.moving = true;
 					currentlyMoving = this.index;
 					foundOne = true;
@@ -107,16 +102,12 @@ function startSketch(){
 						groups[this.groupIndex].setInMotion();
 					}
 					this.movedTimer = 0;
-				} else */if ((currentlyMoving == -1 || currentlyMoving == this.index || currentlyMovingGroup == this.groupIndex) && 
-				p.mouseIsPressed && p.pmouseX > this.x-pieceImageTallW/2 && p.pmouseX < this.x+pieceW+pieceImageTallW/2 && 
-				p.pmouseY > this.y-pieceImageWideH/2 && p.pmouseY < this.y+pieceH+pieceImageWideH/2 && pieceImages[this.index].get(p.pmouseX-this.x+Math.round(pieceImageTallW/2),p.pmouseY-this.y+Math.round(pieceImageWideH/2))[3] == 255) {
-					this.moving = true;
-					currentlyMoving = this.index;
-					foundOne = true;
+				} else {
+					/*this.moving = false;
 					if (this.groupIndex > -1) {
-						groups[this.groupIndex].setInMotion();
+						groups[this.groupIndex].stopMotion();
 					}
-					this.movedTimer = 0;
+					this.movedTimer++;*/
 				}
 			};
 			piece.moveIt = function() {
@@ -160,7 +151,6 @@ function startSketch(){
 							this.y = pieces[this.leftIndex].y;
 						}
 						this.leftDone = true;
-						testSound.play();
 					}
 					
 					if (!this.topDone && this.topIndex != -1 && !pieces[this.topIndex].moving && pieces[this.topIndex].x < this.x+margin && pieces[this.topIndex].x > this.x-margin && pieces[this.topIndex].y+pieceH < this.y+margin && pieces[this.topIndex].y+pieceH > this.y-margin) {
@@ -196,7 +186,6 @@ function startSketch(){
 							this.y = pieces[this.topIndex].y+pieceH;
 						}
 						this.topDone = true;
-						testSound.play();
 					}
 					
 					if (this.leftIndex > -1 && this.groupIndex != -1 && pieces[this.leftIndex].groupIndex == this.groupIndex) {
@@ -259,18 +248,14 @@ function startSketch(){
 				sizeScale = canvasWidth*0.8/puzzleImage.width;
 			}
 			var sizeScale = canvasWidth*0.8/puzzleImage.width;*/
-			var sizeScale = Math.min(1,canvasWidth*0.8/notCropped.width,canvasHeight*0.8/notCropped.height);
-			imageW = Math.round(notCropped.width*sizeScale);
-			imageH = Math.round(notCropped.height*sizeScale);
-			notCropped.resize(imageW,imageH);
-			var newW = Math.floor(imageW/c)*c;
-			var newH = Math.floor(imageH/r)*r;
-			puzzleImage = p.createImage(newW, newH);
-			puzzleImage.copy(notCropped,0,0,newW,newH,0,0,newW,newH);
+			var sizeScale = Math.min(1,canvasWidth*0.8/puzzleImage.width,canvasHeight*0.8/puzzleImage.height);
+			imageW = Math.round(puzzleImage.width*sizeScale);
+			imageH = Math.round(puzzleImage.height*sizeScale);
+			puzzleImage.resize(imageW,imageH);
 			
 			//console.log(testingSource);
-			pieceW = puzzleImage.width/c;
-			pieceH = puzzleImage.height/r;
+			pieceW = Math.round(puzzleImage.width/c);
+			pieceH = Math.round(puzzleImage.height/r);
 			//console.log(pieceH);
 			
 			pieceImageWideW = Math.round(pieceW*5/3);
@@ -307,7 +292,7 @@ function startSketch(){
 				puzzleImage2.pixels[i+3] = 255;
 			}
 			puzzleImage2.updatePixels();
-			puzzleImage2.copy(puzzleImage,0,0,imageW,imageH,Math.round(pieceImageTallW/2),Math.round(pieceImageWideH/2),imageW,imageH);
+			puzzleImage2.copy(puzzleImage,0,0,imageW,imageH,pieceImageTallW/2,pieceImageWideH/2,imageW,imageH);
 			
 			//Make puzzle pieces
 			
@@ -319,38 +304,18 @@ function startSketch(){
 				if (i < c) {//top piece
 					pieceImages[i].loadPixels();
 					topFlat.loadPixels();
-					/*var toDo = pieceImages[i].pixels.length*2/5;
+					var toDo = pieceImages[i].pixels.length*2/5;
 					for (var j = 0; j < toDo; j+=4) {
 						pieceImages[i].pixels[j+3] = topFlat.pixels[j+3];
-					}*/
-					var tempHeight = Math.round(pieceImages[i].height*2/5);
-					var tempWidth = pieceImages[i].width;
-					var tempHeight2 = pieceImages[i].height;
-					var othercount = 0;
-					for (var j = 0; j < tempHeight; j++) {
-						for (var k = 0; k < tempWidth; k++) {
-							pieceImages[i].pixels[4*((j)*tempWidth+k)+3] = topFlat.pixels[othercount+3];
-							othercount+=4;
-						}
 					}
 					topFlat.updatePixels();
 					pieceImages[i].updatePixels();
-				} else if (goesDown[i-c]){//top goes in
+				} else if (goesDown[i-c]){//always in for now
 					pieceImages[i].loadPixels();
 					topIn.loadPixels();
-					/*var toDo = pieceImages[i].pixels.length*2/5;
+					var toDo = pieceImages[i].pixels.length*2/5;
 					for (var j = 0; j < toDo; j+=4) {
 						pieceImages[i].pixels[j+3] = topIn.pixels[j+3];
-					}*/
-					var tempHeight = Math.round(pieceImages[i].height*2/5);
-					var tempWidth = pieceImages[i].width;
-					var tempHeight2 = pieceImages[i].height;
-					var othercount = 0;
-					for (var j = 0; j < tempHeight; j++) {
-						for (var k = 0; k < tempWidth; k++) {
-							pieceImages[i].pixels[4*(j*tempWidth+k)+3] = topIn.pixels[othercount+3];
-							othercount+=4;
-						}
 					}
 					topIn.updatePixels();
 					pieceImages[i].updatePixels();
@@ -461,7 +426,7 @@ function startSketch(){
 					rightFlat.updatePixels();
 					pieceImages[i].updatePixels();
 					goesRight[i] = false;
-				} else if (Math.random(0,1) < 0.5){//go right
+				} else if (Math.random(0,0.5)){//go right
 					pieceImages[i].loadPixels();
 					rightOut.loadPixels();
 					var tempHeight = pieceImages[i].height;
@@ -513,7 +478,7 @@ function startSketch(){
 				//console.log("Yes!");
 				p.text("Congratulations! You finished the puzzle!", canvasWidth/2,canvasHeight/2);
 			}
-			if (counter < beginningTime) {
+			/*if (counter < beginningTime) {
 				for (var i = pieces.length-1; i >= 0; i--) {
 					pieces[i].drawIt();
 					pieces[i].beginningMoveIt();
@@ -544,11 +509,11 @@ function startSketch(){
 				for (var i = 0; i < pieces.length; i++) {
 					pieces[i].checkNeighbors();
 				}
-			}
-			
-			/*for (var i = 0; i < pieceImages.length; i++) {
-				p.image(pieceImages[i], 10+(i%c)*(pieceW+120),20+Math.floor(i/c)*(pieceH+120));
 			}*/
+			
+			for (var i = 0; i < pieceImages.length; i++) {
+				p.image(pieceImages[i], 10+(i%c)*(pieceW+120),20+Math.floor(i/c)*(pieceH+120));
+			}
 			
 			//p.image(testing3,10,20);
 			
