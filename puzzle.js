@@ -15,6 +15,10 @@ function startSketch(){
 		var pieceH;
 		var margin = 6;
 		var beginningTime = 25;
+		var showingGoal = false;
+		var showX;
+		var showY;
+		var movingShowImage = false;
 		
 		var won = false;
 		var wonTime = 0;
@@ -72,6 +76,48 @@ function startSketch(){
 			
 			//testSound = p.loadSound("graphics/testing.m4a");
 		}
+		
+		var onAButton = false;
+		
+		var newButton = function(x, y, w, h, words,offset) {
+		    var button = {};
+		    button.x = x;
+		    button.y = y;
+		    button.w = w;
+		    button.h = h;
+		    button.words = words;
+		    button.hover = false;
+		    button.pressed = false;
+		    button.drawIt = function() {
+		        p.stroke(255, 255, 255, 200);
+		        p.strokeWeight(this.h/10);
+		        if (this.hover) {
+		            p.fill(255, 255, 255, 75);
+		        } else {
+		            p.noFill();
+		        }
+		        p.rect(this.x, this.y, this.w, this.h, 10);
+		        p.noStroke();
+		        p.fill(255, 255, 255, 200);
+				p.textSize(canvasWidth*canvasHeight/30420);
+				p.textAlign(p.CENTER,p.CENTER);
+		        p.text(this.words, this.x, this.y,this.w,this.h);
+		    };
+		    button.update = function() {
+		        this.pressed = false;
+		        this.hover = false;
+		        if (p.mouseX > this.x && p.mouseX < this.x + this.w && p.mouseY > this.y && p.mouseY < this.y + this.h) {
+		            this.hover = true;
+		            onAButton = true;
+		            if (mouseIsReleased) {
+		                this.pressed = true;
+		            }
+		        }
+		    };
+		    return button;
+		};
+		
+		var showImage;
 		
 		var newPiece = function(x,y,index) {
 			var piece = {};
@@ -316,7 +362,7 @@ function startSketch(){
 		p.setup = function() {
 			p.angleMode(p.DEGREES);
 			canvasWidth = 800;
-			canvasWidth = Math.round(windowWidth*0.9);
+			canvasWidth = Math.round(windowWidth*.99);
 			canvasHeight = Math.round(windowHeight*0.8);
 			//canvasHeight = 600;
 			var testCanvas = p.createCanvas(canvasWidth,canvasHeight);
@@ -325,6 +371,8 @@ function startSketch(){
 			p.noFill();
 			p.noStroke();
 			p.background(2, 130, 194); //pick a color
+			
+			showImage = newButton(canvasWidth*0.85, canvasHeight*0.84, canvasWidth*0.14, canvasHeight*0.14, "Show Target Image",0);
 			
 			var sizeScale = Math.min(1,canvasWidth*0.8/notCropped.width,canvasHeight*0.8/notCropped.height);
 			imageW = Math.round(notCropped.width*sizeScale);
@@ -558,7 +606,7 @@ function startSketch(){
 		}
 		
 		p.draw = function() {
-			p.background(2,130,194);
+			p.background(2, 130, 194);
 			//p.fill(255);
 			if (counter < beginningTime) {
 				for (var i = pieces.length-1; i >= 0; i--) {
@@ -569,27 +617,29 @@ function startSketch(){
 				for (var i = pieces.length-1; i >= 0; i--) {
 					pieces[i].drawIt();
 				}
-				foundOne = false;
-				foundGroup = false;
-				for (var i = 0; i < pieces.length; i++) {
-					pieces[i].checkMoving();
-				}
-				if (!foundOne) {
-					currentlyMoving = -1;
+				if (!showingGoal) {
+					foundOne = false;
+					foundGroup = false;
 					for (var i = 0; i < pieces.length; i++) {
-						pieces[i].moving = false;
-						pieces[i].movingTimer++;
+						pieces[i].checkMoving();
 					}
-				}
-				if (!foundGroup) {
-					currentlyMovingGroup = -2;
-				}
-				//console.log(pieces[0].moving+" "+pieces[1].moving);
-				for (var i = 0; i < pieces.length; i++) {
-					pieces[i].moveIt();
-				}
-				for (var i = 0; i < pieces.length; i++) {
-					pieces[i].checkNeighbors();
+					if (!foundOne) {
+						currentlyMoving = -1;
+						for (var i = 0; i < pieces.length; i++) {
+							pieces[i].moving = false;
+							pieces[i].movingTimer++;
+						}
+					}
+					if (!foundGroup) {
+						currentlyMovingGroup = -2;
+					}
+					//console.log(pieces[0].moving+" "+pieces[1].moving);
+					for (var i = 0; i < pieces.length; i++) {
+						pieces[i].moveIt();
+					}
+					for (var i = 0; i < pieces.length; i++) {
+						pieces[i].checkNeighbors();
+					}
 				}
 			}
 			if (won) {
@@ -607,8 +657,50 @@ function startSketch(){
 					//console.log(p.mouseX,p.mouseY);
 					//Text will be 0.41606*canvasWidth wide
 					p.fill(255);
-					p.text("Congratulations!",canvasWidth*0.29197,canvasHeight/2);
+					p.textAlign(p.CENTER,p.CENTER);
+					p.text("Congratulations!",0,0,canvasWidth,canvasHeight);
 				}
+			}
+			
+			//console.log(mouseIsReleased);
+			
+			if (showingGoal) {
+				p.fill(200,200,200,120);
+				p.rect(0,0,canvasWidth,canvasHeight);
+				p.image(puzzleImage,showX,showY);
+				
+				if (movingShowImage && p.mouseX > 0 && p.mouseX < canvasWidth && p.mouseY > 0 && p.mouseY < canvasHeight) {
+					showX += p.mouseX-p.pmouseX;
+					showY += p.mouseY-p.pmouseY;
+				}
+				if (p.mouseIsPressed && p.mouseX > showX && p.mouseX < showX+puzzleImage.width && p.mouseY > showY && p.mouseY < showY+puzzleImage.height) {
+					movingShowImage = true;
+				}
+				
+				if (mouseIsReleased || p.pmouseX < showX || p.pmouseX > showX+puzzleImage.width || p.pmouseY < showY || p.pmouseY > showY+puzzleImage.height) {
+					movingShowImage = false;
+				}
+				
+				if (mouseIsReleased && (p.mouseX < showX || p.mouseX > showX+puzzleImage.width || p.mouseY < showY || p.mouseY > showY+puzzleImage.height)) {
+					showingGoal = false;
+					//console.log("hi");
+				}
+			}
+			
+			showImage.update();
+			showImage.drawIt();
+			
+			if (showImage.pressed && currentlyMoving == -1) {
+				showingGoal = true;
+				showX = canvasWidth/2-puzzleImage.width/2;
+				showY = canvasHeight/2-puzzleImage.height/2;
+				//mouseIsReleased = false;
+			}
+			
+			if (onAButton) {
+				p.cursor(p.HAND);
+			} else {
+				p.cursor(p.ARROW);
 			}
 			
 			/*for (var i = 0; i < pieceImages.length; i++) {
@@ -629,8 +721,11 @@ function startSketch(){
 				newOne = false;
 			}
 			
+			//console.log(showImage.pressed,showingGoal);
+			
 			counter++;
 			//console.log(mouseIsHeld);
+			onAButton = false;
 			mouseIsReleased = false;
 		};
 	};
