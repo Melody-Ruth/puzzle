@@ -1,5 +1,7 @@
 //Created by Melody Ruth. Licensed under Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0)
 
+//Part of the 1.2.3 update. r & c now chosen by the user
+
 var testingSource;
 
 var testNumber = 5;
@@ -18,17 +20,13 @@ function setUp() {
 	rowsInput.defaultValue = 3;
 	rowsInput.max = 16;
 	rowsInput.min = 1;
-	if (rowsInput && rowsInput.value) {
-		r = rowsInput.value;
-	}
+	r = 3;
 	
 	var columnsInput = document.getElementById("inputColumns");
 	columnsInput.defaultValue = 4;
 	columnsInput.max = 16;
 	columnsInput.min = 1;
-	if (columnsInput && columnsInput.value) {
-		c = columnsInput.value;
-	}
+	c = 4;
 };
 
 function handleSizeInput() {

@@ -1,5 +1,7 @@
 //Created by Melody Ruth. Licensed under Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0)
 
+//Switched the way I add the knobs. Now knobs have random position. Also got rid of more white line.
+
 function startSketch(){
 	var sketch = function(p) {
 		var counter = 0;
@@ -9,6 +11,8 @@ function startSketch(){
 		var puzzleImage2;
 		var newOne = false;
 		var numPieces = 6;//3x2
+		var r = 3;
+		var c = 3;
 		var imageW;
 		var imageH;
 		var pieceW;
@@ -17,21 +21,14 @@ function startSketch(){
 		var beginningTime = 25;
 		
 		var won = false;
-		var wonTime = 0;
 		
 		var pieceImages = [];
-		var topOut = [];
-		var leftOut = [];
-		var rightOut = [];
-		var bottomOut = [];
 		var pieces = [];
 		var groups = [];
 		var goesDown = [];
 		var downX = [];
-		var downType = [];
 		var goesRight = [];
 		var rightY = [];
-		var rightType = [];
 		var nextGroup = 0;
 		var testImage;
 		var currentlyMoving = -1;
@@ -55,22 +52,27 @@ function startSketch(){
 		p.preload = function() {
 			notCropped = p.loadImage(testingSource);
 			
-			topOut[0] = p.loadImage("graphics/top_out.png");
-			topOut[1] = p.loadImage("graphics/top_out2.png");
-			topOut[2] = p.loadImage("graphics/top_out3.png");
-			rightOut[0] = p.loadImage("graphics/right_out.png");
-			rightOut[1] = p.loadImage("graphics/right_out2.png");
-			rightOut[2] = p.loadImage("graphics/right_out3.png");
-			leftOut[0] = p.loadImage("graphics/left_out.png");
-			leftOut[1] = p.loadImage("graphics/left_out2.png");
-			leftOut[2] = p.loadImage("graphics/left_out3.png");
-			bottomOut[0] = p.loadImage("graphics/bottom_out.png");
-			bottomOut[1] = p.loadImage("graphics/bottom_out2.png");
-			bottomOut[2] = p.loadImage("graphics/bottom_out3.png");
+			/*bottomIn = p.loadImage("graphics/piece_bottom_in.png");
+			bottomOut = p.loadImage("graphics/piece_bottom_out.png");
+			bottomFlat = p.loadImage("graphics/piece_bottom_flat.png");
+			leftIn = p.loadImage("graphics/piece_left_in.png");
+			leftOut = p.loadImage("graphics/piece_left_out.png");
+			leftFlat = p.loadImage("graphics/piece_left_flat.png");
+			rightIn = p.loadImage("graphics/piece_right_in.png");
+			rightOut = p.loadImage("graphics/piece_right_out.png");
+			rightFlat = p.loadImage("graphics/piece_right_flat.png");
+			topIn = p.loadImage("graphics/piece_top_in.png");
+			topOut = p.loadImage("graphics/piece_top_out.png");
+			topFlat = p.loadImage("graphics/piece_top_flat.png");*/
+			
+			topOut = p.loadImage("graphics/top_out.png");
+			rightOut = p.loadImage("graphics/right_out.png");
+			leftOut = p.loadImage("graphics/left_out.png");
+			bottomOut = p.loadImage("graphics/bottom_out.png");
 			
 			testing3 = p.loadImage("graphics/testing3.png");
 			
-			//testSound = p.loadSound("graphics/testing.m4a");
+			testSound = p.loadSound("graphics/testing.m4a");
 		}
 		
 		var newPiece = function(x,y,index) {
@@ -118,8 +120,7 @@ function startSketch(){
 					this.movedTimer = 0;
 				} else */if ((currentlyMoving == -1 || currentlyMoving == this.index || currentlyMovingGroup == this.groupIndex) && 
 				p.mouseIsPressed && p.pmouseX > this.x-pieceImageTallW/2 && p.pmouseX < this.x+pieceW+pieceImageTallW/2 && 
-				p.pmouseY > this.y-pieceImageWideH/2 && p.pmouseY < this.y+pieceH+pieceImageWideH/2 && pieceImages[this.index].get(p.pmouseX-this.x+Math.round(pieceImageTallW/2),p.pmouseY-this.y+Math.round(pieceImageWideH/2))[3] == 255
-				&& p.mouseX > 0 && p.mouseX < canvasWidth && p.mouseY > 0 && p.mouseY < canvasHeight) {
+				p.pmouseY > this.y-pieceImageWideH/2 && p.pmouseY < this.y+pieceH+pieceImageWideH/2 && pieceImages[this.index].get(p.pmouseX-this.x+Math.round(pieceImageTallW/2),p.pmouseY-this.y+Math.round(pieceImageWideH/2))[3] == 255) {
 					this.moving = true;
 					currentlyMoving = this.index;
 					foundOne = true;
@@ -170,7 +171,7 @@ function startSketch(){
 							this.y = pieces[this.leftIndex].y;
 						}
 						this.leftDone = true;
-						//testSound.play();
+						testSound.play();
 					}
 					
 					if (!this.topDone && this.topIndex != -1 && !pieces[this.topIndex].moving && pieces[this.topIndex].x < this.x+margin && pieces[this.topIndex].x > this.x-margin && pieces[this.topIndex].y+pieceH < this.y+margin && pieces[this.topIndex].y+pieceH > this.y-margin) {
@@ -206,7 +207,7 @@ function startSketch(){
 							this.y = pieces[this.topIndex].y+pieceH;
 						}
 						this.topDone = true;
-						//testSound.play();
+						testSound.play();
 					}
 					
 					if (this.leftIndex > -1 && this.groupIndex != -1 && pieces[this.leftIndex].groupIndex == this.groupIndex) {
@@ -216,9 +217,8 @@ function startSketch(){
 						this.topDone = true;
 					}
 				}
-				if (!won && this.groupIndex != -1 && groups[this.groupIndex].indices.length == r*c) {
-					won = true;
-					wonTime = counter;
+				if (this.groupIndex != -1 && groups[this.groupIndex].indices.length == r*c) {
+					won=true;
 				}
 				
 			};
@@ -253,79 +253,23 @@ function startSketch(){
 			return group;
 		};
 		
-		var eyeX = 0;
-		var eyeY = -67;
-		var eyeZ = 0;
-		var zw = 240;
-		
-		var xyz2xy = function(x, y, z) {
-			return [(zw-eyeZ)*(x-eyeX)/(z-eyeZ) + eyeX, (zw-eyeZ)*(y-eyeY)/(z-eyeZ) + eyeY];
-		};
-		
-		var myRandom = function(low,high) {
-			return Math.random()*(high-low)+low;
-		};
-		
-		var newConfettiPiece = function(x1,y1,z1,h,r,colorR,colorG,colorB,rotateSpeed) {
-			var confetti = {};
-			confetti.p1 = [x1,y1,z1];
-			confetti.p2 = [x1+r,y1-r*Math.sqrt(2),z1];
-			confetti.p3 = [x1+r,y1-r*Math.sqrt(2)-h,z1];
-			confetti.p4 = [x1,y1-h,z1];
-			confetti.h = h;
-			confetti.r = r;
-			confetti.color = [colorR,colorG,colorB];
-			confetti.fallSpeed = h*r/200;
-			confetti.rotateSpeed = rotateSpeed;
-			confetti.currentAngle = 0;
-			/*if (Math.myRandom() > 0.5) {
-				confetti.direction = -1;
-			} else {
-				confetti.direction = 1;
-			}*/
-			confetti.findPos = function() {
-				this.screenP1 = xyz2xy(this.p1[0],this.p1[1],this.p1[2]);
-				this.screenP2 = xyz2xy(this.p2[0],this.p2[1],this.p2[2]);
-				this.screenP3 = xyz2xy(this.p3[0],this.p3[1],this.p3[2]);
-				this.screenP4 = xyz2xy(this.p4[0],this.p4[1],this.p4[2]);
-			}
-			confetti.drawIt = function() {
-				p.fill(this.color[0],this.color[1],this.color[2]);
-				p.quad(this.screenP1[0],this.screenP1[1],this.screenP2[0],this.screenP2[1],this.screenP3[0],this.screenP3[1],this.screenP4[0],this.screenP4[1]);
-			}
-			confetti.moveIt = function() {
-				this.p1[1]+=this.fallSpeed;
-				this.p2[1]+=this.fallSpeed;
-				this.p3[1]+=this.fallSpeed;
-				this.p4[1]+=this.fallSpeed;
-			}
-			confetti.rotate = function() {
-				//var startAngle = Math.atan((this.p2[2]-this.p1[2])/(this.p2[0]-this.p1[0]));
-				//var newAngle = startAngle + this.rotateSpeed;
-				this.currentAngle += this.rotateSpeed;
-				this.p2[2] = this.p1[2]+r*Math.sin(this.currentAngle);
-				this.p3[2] = this.p2[2];
-				this.p2[0] = this.p1[0]+r*Math.cos(this.currentAngle);
-				this.p3[0] = this.p2[0];
-			}
-			return confetti;
-		};
-		
-		var confettiArray = [];
-		
 		p.setup = function() {
 			p.angleMode(p.DEGREES);
 			canvasWidth = 800;
-			canvasWidth = Math.round(windowWidth*0.9);
+			canvasWidth = Math.round(windowWidth*0.6);
 			canvasHeight = Math.round(windowHeight*0.8);
-			//canvasHeight = 600;
+			canvasHeight = 600;
 			var testCanvas = p.createCanvas(canvasWidth,canvasHeight);
-			eyeX = canvasWidth/2;
 			testCanvas.parent('canvas1');
 			p.noFill();
 			p.noStroke();
 			p.background(2, 130, 194); //pick a color
 			
+			//var sizeScale = 1;
+			/*if (canvasWidth*0.8/puzzleImage.width < 1) {
+				sizeScale = canvasWidth*0.8/puzzleImage.width;
+			}
+			var sizeScale = canvasWidth*0.8/puzzleImage.width;*/
 			var sizeScale = Math.min(1,canvasWidth*0.8/notCropped.width,canvasHeight*0.8/notCropped.height);
 			imageW = Math.round(notCropped.width*sizeScale);
 			imageH = Math.round(notCropped.height*sizeScale);
@@ -334,11 +278,15 @@ function startSketch(){
 			var newH = Math.floor(imageH/(r*knobH))*r*knobH;
 			newW = Math.floor(imageW/(c*3))*c*3;
 			newH = Math.floor(imageH/(r*3))*r*3;
+			//newW = Math.floor(newW/knobW)*knobW;
+			//newH = Math.floor(newH/knobH)*knobH;
 			puzzleImage = p.createImage(newW, newH);
 			puzzleImage.copy(notCropped,0,0,newW,newH,0,0,newW,newH);
 			
+			//console.log(testingSource);
 			pieceW = puzzleImage.width/c;
 			pieceH = puzzleImage.height/r;
+			//console.log(pieceH);
 			
 			pieceImageWideW = Math.round(pieceW*5/3);
 			pieceImageWideH = Math.round(pieceH*2/3);
@@ -347,18 +295,10 @@ function startSketch(){
 			
 			knobW = Math.round(pieceW/3);
 			knobH = Math.round(pieceH/3);
-			for (var i = 0; i < topOut.length; i++) {
-				topOut[i].resize(knobW,knobH);
-			}
-			for (var i = 0; i < rightOut.length; i++) {
-				rightOut[i].resize(knobW,knobH);
-			}
-			for (var i = 0; i < leftOut.length; i++) {
-				leftOut[i].resize(knobW,knobH);
-			}
-			for (var i = 0; i < bottomOut.length; i++) {
-				bottomOut[i].resize(knobW,knobH);
-			}
+			topOut.resize(knobW,knobH);
+			rightOut.resize(knobW,knobH);
+			leftOut.resize(knobW,knobH);
+			bottomOut.resize(knobW,knobH);
 			
 			puzzleImage2 = p.createImage(newW+knobW*2,newH+knobH*2);
 			puzzleImage2.loadPixels();
@@ -407,25 +347,25 @@ function startSketch(){
 				} else if (goesDown[i-c]) {
 					//The one above us goes out, so we need to go in
 					othercount = 0;
-					bottomOut[downType[i-c]].loadPixels();
+					bottomOut.loadPixels();
 					for (var j = knobH; j < knobH*2; j++) {
 						for (var k = downX[i-c]; k < downX[i-c]+knobW; k++) {
-							pieceImages[i].pixels[4*(j*tempWidth+k)+3] = 255-bottomOut[downType[i-c]].pixels[othercount+3];
+							pieceImages[i].pixels[4*(j*tempWidth+k)+3] = 255-bottomOut.pixels[othercount+3];
 							othercount+=4;
 						}
 					}
-					bottomOut[downType[i-c]].updatePixels();
+					bottomOut.updatePixels();
 				} else {
 					//The one above us goes in, so we need to go out
 					othercount = 0;
-					topOut[downType[i-c]].loadPixels();
+					topOut.loadPixels();
 					for (var j = 0; j < knobH; j++) {
 						for (var k = downX[i-c]; k < downX[i-c]+knobW; k++) {
-							pieceImages[i].pixels[4*(j*tempWidth+k)+3] = topOut[downType[i-c]].pixels[othercount+3];
+							pieceImages[i].pixels[4*(j*tempWidth+k)+3] = topOut.pixels[othercount+3];
 							othercount+=4;
 						}
 					}
-					topOut[downType[i-c]].updatePixels();
+					topOut.updatePixels();
 				}
 				//Bottom:
 				if (i >= (r-1)*c) {
@@ -434,36 +374,30 @@ function startSketch(){
 				} else if (Math.random() < 0.5) {
 					//We're going to go in!
 					othercount = 0;
+					topOut.loadPixels();
 					goesDown[i] = false;
-					var maxX = Math.round(knobW*5/2);
-					var minX = Math.round(knobW*3/2);
-					if (i % c != 0 && goesRight[i-1] && rightY[i-1] > 2*knobH) {
-						minX = knobW*2;
-					}
-					downX[i] = Math.round(p.random(minX,maxX));
-					downType[i] = Math.floor(p.random(topOut.length));
-					topOut[downType[i]].loadPixels();
+					downX[i] = Math.round(p.random(Math.round(knobW*3/2),Math.round(knobW*5/2)));
 					for (var j = tempHeight-knobH*2; j < tempHeight-knobH; j++) {
 						for (var k = downX[i]; k < downX[i]+knobW; k++) {
-							pieceImages[i].pixels[4*(j*tempWidth+k)+3] = 255-topOut[downType[i]].pixels[othercount+3];
+							pieceImages[i].pixels[4*(j*tempWidth+k)+3] = 255-topOut.pixels[othercount+3];
 							othercount+=4;
 						}
 					}
-					topOut[downType[i]].updatePixels();
+					topOut.updatePixels();
 				} else {
 					//We're going to go out!
 					othercount = 0;
+					bottomOut.loadPixels();
 					goesDown[i] = true;
 					downX[i] = Math.round(p.random(Math.round(knobW*3/2),Math.round(knobW*5/2)));
-					downType[i] = Math.floor(p.random(topOut.length));
-					bottomOut[downType[i]].loadPixels();
+					//console.log(downX[i]);
 					for (var j = tempHeight-knobH; j < tempHeight; j++) {
 						for (var k = downX[i]; k < downX[i]+knobW; k++) {
-							pieceImages[i].pixels[4*(j*tempWidth+k)+3] = bottomOut[downType[i]].pixels[othercount+3];
+							pieceImages[i].pixels[4*(j*tempWidth+k)+3] = bottomOut.pixels[othercount+3];
 							othercount+=4;
 						}
 					}
-					bottomOut[downType[i]].updatePixels();
+					bottomOut.updatePixels();
 				}
 				//Left:
 				if (i % c == 0) {
@@ -471,25 +405,25 @@ function startSketch(){
 				} else if (goesRight[i-1]) {
 					//The one to the left of us goes out, so we need to go in
 					othercount = 0;
-					rightOut[rightType[i-1]].loadPixels();
+					rightOut.loadPixels();
 					for (var j = rightY[i-1]; j < rightY[i-1]+knobH; j++) {
 						for (var k = knobW; k < knobW*2; k++) {
-							pieceImages[i].pixels[4*(j*tempWidth+k)+3] = 255-rightOut[rightType[i-1]].pixels[othercount+3];
+							pieceImages[i].pixels[4*(j*tempWidth+k)+3] = 255-rightOut.pixels[othercount+3];
 							othercount+=4;
 						}
 					}
-					rightOut[rightType[i-1]].updatePixels();
+					rightOut.updatePixels();
 				} else {
 					//The one to the left of us goes in, so we need to go out
 					othercount = 0;
-					leftOut[rightType[i-1]].loadPixels();
+					leftOut.loadPixels();
 					for (var j = rightY[i-1]; j < rightY[i-1]+knobH; j++) {
 						for (var k = 0; k < knobW; k++) {
-							pieceImages[i].pixels[4*(j*tempWidth+k)+3] = leftOut[rightType[i-1]].pixels[othercount+3];
+							pieceImages[i].pixels[4*(j*tempWidth+k)+3] = leftOut.pixels[othercount+3];
 							othercount+=4;
 						}
 					}
-					leftOut[rightType[i-1]].updatePixels();
+					leftOut.updatePixels();
 				}
 				//Right:
 				if ((i+1) % c == 0) {
@@ -498,68 +432,51 @@ function startSketch(){
 				} else if (Math.random() < 0.5) {
 					//We're going to go in!
 					othercount = 0;
+					leftOut.loadPixels();
 					goesRight[i] = false;
-					var maxY = Math.round(knobH*5/2);
-					var minY = Math.round(knobH*3/2);
-					if (i >= c && goesDown[i-c] && downX[i-c] > 2*knobW) {
-						minY = knobH*2;
-					}
-					if (i < (r-1)*c && !goesDown[i] && downX[i] > 2*knobW) {
-						maxY = knobH*2;
-					}
-					rightY[i] = Math.round(p.random(minY,maxY));
-					rightType[i] = Math.floor(p.random(rightOut.length));
-					leftOut[rightType[i]].loadPixels();
+					rightY[i] = Math.round(p.random(Math.round(knobH*3/2),Math.round(knobH*5/2)));
 					for (var j = rightY[i]; j < rightY[i]+knobH; j++) {
 						for (var k = tempWidth-knobW*2; k < tempWidth-knobW; k++) {
-							pieceImages[i].pixels[4*(j*tempWidth+k)+3] = 255-leftOut[rightType[i]].pixels[othercount+3];
+							pieceImages[i].pixels[4*(j*tempWidth+k)+3] = 255-leftOut.pixels[othercount+3];
 							othercount+=4;
 						}
 					}
-					leftOut[rightType[i]].updatePixels();
+					leftOut.updatePixels();
 				} else {
 					//We're going to go out!
 					othercount = 0;
+					rightOut.loadPixels();
 					goesRight[i] = true;
-					var maxY = Math.round(knobH*5/2);
-					var minY = Math.round(knobH*3/2);
-					if (i >= c && goesDown[i-c+1] && downX[i-c+1] < 2*knobW) {
-						minY = 2*knobH;
-					}
-					rightY[i] = Math.round(p.random(minY,maxY));
-					rightType[i] = Math.floor(p.random(rightOut.length));
-					rightOut[rightType[i]].loadPixels();
+					rightY[i] = Math.round(p.random(Math.round(knobH*3/2),Math.round(knobH*5/2)));
+					//console.log(downX[i]);
 					for (var j = rightY[i]; j < rightY[i]+knobH; j++) {
 						for (var k = tempWidth-knobW; k < tempWidth; k++) {
-							pieceImages[i].pixels[4*(j*tempWidth+k)+3] = rightOut[rightType[i]].pixels[othercount+3];
+							pieceImages[i].pixels[4*(j*tempWidth+k)+3] = rightOut.pixels[othercount+3];
 							othercount+=4;
 						}
 					}
-					rightOut[rightType[i]].updatePixels();
+					rightOut.updatePixels();
 				}
 				pieceImages[i].updatePixels();
 			}
 			
 			for (var i = 0; i < r*c; i++) {
 				pieces[i] = newPiece(p.random(0,canvasWidth-pieceW),p.random(0,canvasHeight-pieceH),i);
-			}
-			
-			for (var i = 0; i < 400; i++) {
-				//console.log(canvasWidth);
-				confettiArray[i] = newConfettiPiece(myRandom(-canvasWidth/2,canvasWidth*3/2),
-				myRandom(-800,200),300+i*2,myRandom(20,40),myRandom(10,20),myRandom(0,255),myRandom(0,255),myRandom(0,255),myRandom(0.01,0.08));
+				//console.log(pieceW);
 			}
 		};
 		
 		p.mouseReleased = function() {
 			mouseIsReleased = true;
-			mouseIsHeld = false;
-			//console.log("done");
 		}
 		
 		p.draw = function() {
 			p.background(2,130,194);
-			//p.fill(255);
+			p.fill(255);
+			if (won) {
+				//console.log("Yes!");
+				p.text("Congratulations! You finished the puzzle!", canvasWidth/2,canvasHeight/2);
+			}
 			if (counter < beginningTime) {
 				for (var i = pieces.length-1; i >= 0; i--) {
 					pieces[i].drawIt();
@@ -592,28 +509,22 @@ function startSketch(){
 					pieces[i].checkNeighbors();
 				}
 			}
-			if (won) {
-				//console.log("Yes!");
-				//p.text("Congratulations! You finished the puzzle!", canvasWidth/2,canvasHeight/2);
-				for (var i = 0; i < confettiArray.length; i++) {
-					confettiArray[i].moveIt();
-					confettiArray[i].rotate();
-					confettiArray[i].findPos();
-					confettiArray[i].drawIt();
-				}
-				if (counter < wonTime+1000) {
-					p.textSize(canvasWidth*0.05789);
-					//console.log(canvasWidth);
-					//console.log(p.mouseX,p.mouseY);
-					//Text will be 0.41606*canvasWidth wide
-					p.fill(255);
-					p.text("Congratulations!",canvasWidth*0.29197,canvasHeight/2);
-				}
-			}
 			
 			/*for (var i = 0; i < pieceImages.length; i++) {
 				p.image(pieceImages[i], 10+(i%c)*(pieceW+120),20+Math.floor(i/c)*(pieceH+120));
 			}*/
+			
+			//p.image(testing3,10,20);
+			
+			//p.image(puzzleImage2, canvasWidth/2,canvasHeight/2);
+			
+			//p.image(bottomIn, 20+pieceW-pieceImageWideW/5, 20+pieceH-pieceImageWideH/2);
+			//p.image(rightIn, 20+2*pieceW-pieceImageTallW/2, 20-pieceImageTallH/5);
+			//console.log(pieceImageWideH*3/2);
+			//p.image(bottomFlat,10,20+pieceImageWideH*3/2);
+			
+			//p.image(testImage,300,20);
+			//console.log(imageW);
 			
 			if (counter > 0 && settingUp && newOne) {//We are the newly made sketch, and we've already setup
 				settingUp = false;
@@ -630,7 +541,6 @@ function startSketch(){
 			}
 			
 			counter++;
-			//console.log(mouseIsHeld);
 			mouseIsReleased = false;
 		};
 	};
